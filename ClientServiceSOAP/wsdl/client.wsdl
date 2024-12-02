@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions 
+    name="ClientWebService"
+    targetNamespace="http://example.com/clientservice"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://example.com/clientservice"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+    <types>
+        <xsd:schema targetNamespace="http://example.com/clientservice">
+            <xsd:complexType name="Client">
+                <xsd:sequence>
+                    <xsd:element name="numCompte" type="xsd:string"/>
+                    <xsd:element name="nom" type="xsd:string"/>
+                    <xsd:element name="prenom" type="xsd:string"/>
+                    <xsd:element name="cin" type="xsd:string"/>
+                    <xsd:element name="adresse" type="xsd:string"/>
+                    <xsd:element name="telephone" type="xsd:string"/>
+                    <xsd:element name="email" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:element name="GetAllClientsRequest"/>
+            <xsd:element name="GetAllClientsResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="clients" type="tns:Client" minOccurs="0" maxOccurs="unbounded"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="GetClientByNumCompteRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="numCompte" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="GetClientByNumCompteResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="client" type="tns:Client"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="AddClientRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="client" type="tns:Client"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="AddClientResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="client" type="tns:Client"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="DeleteClientRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="numCompte" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="DeleteClientResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+    
+    <message name="GetAllClientsRequest">
+        <part name="parameters" element="tns:GetAllClientsRequest"/>
+    </message>
+    <message name="GetAllClientsResponse">
+        <part name="parameters" element="tns:GetAllClientsResponse"/>
+    </message>
+
+    <message name="GetClientByNumCompteRequest">
+        <part name="parameters" element="tns:GetClientByNumCompteRequest"/>
+    </message>
+    <message name="GetClientByNumCompteResponse">
+        <part name="parameters" element="tns:GetClientByNumCompteResponse"/>
+    </message>
+
+    <message name="AddClientRequest">
+        <part name="parameters" element="tns:AddClientRequest"/>
+    </message>
+    <message name="AddClientResponse">
+        <part name="parameters" element="tns:AddClientResponse"/>
+    </message>
+
+    <message name="DeleteClientRequest">
+        <part name="parameters" element="tns:DeleteClientRequest"/>
+    </message>
+    <message name="DeleteClientResponse">
+        <part name="parameters" element="tns:DeleteClientResponse"/>
+    </message>
+    
+    <portType name="ClientWebServicePortType">
+        <operation name="GetAllClients">
+            <input message="tns:GetAllClientsRequest"/>
+            <output message="tns:GetAllClientsResponse"/>
+        </operation>
+        
+        <operation name="GetClientByNumCompte">
+            <input message="tns:GetClientByNumCompteRequest"/>
+            <output message="tns:GetClientByNumCompteResponse"/>
+        </operation>
+        
+        <operation name="AddClient">
+            <input message="tns:AddClientRequest"/>
+            <output message="tns:AddClientResponse"/>
+        </operation>
+        
+        <operation name="DeleteClient">
+            <input message="tns:DeleteClientRequest"/>
+            <output message="tns:DeleteClientResponse"/>
+        </operation>
+    </portType>
+    
+    <binding name="ClientWebServiceBinding" type="tns:ClientWebServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        
+        <operation name="GetAllClients">
+            <soap:operation soapAction="http://example.com/clientservice/GetAllClients"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="GetClientByNumCompte">
+            <soap:operation soapAction="http://example.com/clientservice/GetClientByNumCompte"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="AddClient">
+            <soap:operation soapAction="http://example.com/clientservice/AddClient"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        
+        <operation name="DeleteClient">
+            <soap:operation soapAction="http://example.com/clientservice/DeleteClient"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+    
+    <service name="ClientWebService">
+        <documentation>Client Management Web Service</documentation>
+        <port name="ClientWebServicePort" binding="tns:ClientWebServiceBinding">
+            <soap:address location="http://localhost:8000/client"/>
+        </port>
+    </service>
+</definitions>

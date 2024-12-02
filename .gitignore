@@ -1,0 +1,34 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
+.idea/
+.vscode/
+*.log
+
+# Spring Boot
+*.log
+target/
+*.jar
+*.war
+*.ear
+*.class
+*.iml
+.settings/
+.springBeans
+out/
+
+# IDE-specific files
+.idea/
+.vscode/
+*.iml
+
+# OS-specific files
+.DS_Store         # macOS
+Thumbs.db         # Windows
+
+# Other common files
+*.swp              # vim swap files
+*.swo              # vim backup files
