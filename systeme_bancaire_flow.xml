@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd">
+	<flow name="GetAllClients1" doc:id="b9914b91-450d-4da4-9d9d-c36e4a7893a5" >
+		<http:listener doc:name="Listener" doc:id="5cd95bc7-0a87-4d87-ba46-2d2f4f528382" config-ref="ClientSoapListner" path="clients/getAllClients" />
+		<ee:transform doc:name="Transform Message" doc:id="21b32995-b449-46c5-850c-a1c47c763310" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://example.com/clientservice
+---
+ns0#GetAllClientsRequest: {}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="GetAllClients" doc:name="Consume" doc:id="8512b344-4827-4833-a422-7efc69be67cc" config-ref="Web_Service_Consumer_Config" />
+	</flow>
+	<flow name="GetClientByNumCompte1" doc:id="725773e1-101f-4918-a0d6-19d79dfd7ab1" >
+		<http:listener doc:name="Listener" doc:id="d549d928-023a-421b-867a-a4381ac37d60" config-ref="ClientSoapListner" path="clients/getClientByNumCompte" />
+		<ee:transform doc:name="" doc:id="f41349a9-88cc-4b6e-aa6f-a04487a91118" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://example.com/clientservice
+---
+ns0#GetClientByNumCompteRequest: {
+    ns0#num_compte: attributes.queryParams.num_compte
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="GetClientByNumCompte" doc:name="Get Client" doc:id="242da37d-173c-47cb-ad80-420f05e18aa3" config-ref="Web_Service_Consumer_Config" />
+	</flow>
+	<flow name="AddNewClient1" doc:id="7c2edda5-657a-473c-a96c-1d397c82c417" >
+		<http:listener doc:name="Listener" doc:id="1c31fc7c-6b15-40a7-8072-7489bf988576" config-ref="ClientSoapListner" path="clients/addClient" />
+		<ee:transform doc:name="" doc:id="57c2d0b6-1631-438c-a971-50cb8d0bc475" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns ns0 http://example.com/clientservice
+---
+ns0#AddClientRequest: {
+    ns0#client: {
+        ns0#num_compte: payload.num_compte,
+        ns0#nom: payload.nom,
+        ns0#prenom: payload.prenom,
+        ns0#cin: payload.cin,
+        ns0#adresse: payload.adresse,
+        ns0#telephone: payload.telephone,
+        ns0#email: payload.email
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<wsc:consume operation="AddClient" doc:name="Add Client" doc:id="5e19e6bc-18f0-45fa-8281-46abe6db2a03" config-ref="Web_Service_Consumer_Config" />
+	</flow>
+	<flow name="getAllRequests1" doc:id="24cdcb5a-4e34-4ab1-9fac-c7b2f1b498e6" >
+		<http:listener doc:name="Request_Listener" doc:id="da213673-f1a6-4037-9bc8-43c355521d66" config-ref="Request_Listner" path="/all" />
+		<http:request method="GET" doc:name="Requests_Request" doc:id="12907ff3-6597-4991-85c4-a21b9c23c0fa" config-ref="Client_HTTP_Request" path="/all" />
+	</flow>
+	<flow name="GetRequestById1" doc:id="bef11683-2486-4f88-86c8-cd103c34bfa6" >
+		<http:listener doc:name="Listener" doc:id="65fcd316-41e2-4f54-99b9-efbc48192db5" config-ref="Request_Listner" path="/{requestId}" />
+		<set-variable value="#[attributes.uriParams.requestId]" doc:name="Set Variable" doc:id="470b6d05-b078-4a40-a3a6-ba584ecdcf07" variableName="requestId" />
+		<http:request method="GET" doc:name="Request" doc:id="6469fb8a-5e47-4b53-8876-b56f9f8057ac" config-ref="Client_HTTP_Request" path="#[vars.requestId]" />
+	</flow>
+	<flow name="AddRequest1" doc:id="46472383-8396-4e71-9404-bdeaa479fe9c" >
+		<http:listener doc:name="Listener" doc:id="a9b66f8b-accd-412c-a799-fa8b9bd271af" config-ref="Request_Listner" path="/add" />
+		<http:request method="POST" doc:name="Request" doc:id="6ca31e80-8b62-46f0-9063-bab09daf6c86" config-ref="Client_HTTP_Request" path="/add" />
+	</flow>
+	<flow name="CheckClientFlow1" doc:id="14fb80b7-decb-421f-ac0d-812ab24eb620" >
+		<http:listener doc:name="Listener" doc:id="698085d7-c5b2-4975-8857-eebbaa0b46cc" config-ref="HTTP_Listener_config1" path="{num_compte}" />
+		<set-variable value="#[attributes.uriParams.num_compte]" doc:name="Set Variable" doc:id="477de9d1-1212-4689-8969-3534a4895be4" variableName="num_compte" />
+		<http:request method="GET" doc:name="Request" doc:id="e77e47ba-89ba-42fb-bd33-4940075022b5" config-ref="CheckClientRequest" path="#[vars.num_compte]" />
+	</flow>
+	<flow name="ChangeStatusFlow1" doc:id="d5452a2f-7586-4036-8517-c198ea8339a3" >
+		<http:listener doc:name="Listener" doc:id="2a38f5b4-8f67-46e9-955a-217374f32086" config-ref="HTTP_Listener_config" path="/{requestid}" />
+		<set-variable value="#[attributes.uriParams.requestid]" doc:name="Set Variable" doc:id="1711c54f-4d02-4018-b853-699c2cbb0916" variableName="requestid" />
+		<set-variable value="#[payload.newStatus]" doc:name="Set Variable1" doc:id="5b5784d0-6b89-46fc-9303-674b74577d97" variableName="newStatus" />
+		<http:request method="PUT" doc:name="Request" doc:id="7619f679-6906-4924-8b2a-68a2a94b612b" config-ref="HTTP_Request_configuration" path="#[vars.requestid]" >
+			<http:body ><![CDATA[#[output application/json --- { "newStatus": vars.newStatus }]]]></http:body>
+		</http:request>
+	</flow>
+	<flow name="VerifRequestFlow1" doc:id="e0251342-ff84-42e4-a38d-5f1454261fe8" >
+		<http:listener doc:name="Listener" doc:id="222445aa-c916-4173-8b66-50bf61fbfff1" config-ref="VerifRequestListner" path="/{requestid}" />
+		<set-variable value="#[attributes.uriParams.requestid]" doc:name="Set Variable" doc:id="ba5d2ee1-e701-4b52-934a-d9a3474e882d" variableName="requestid" />
+		<http:request method="GET" doc:name="Request" doc:id="75fa717d-d27d-4055-a249-7f71a7a1b1d5" config-ref="VerifRequest_Request" path="#[vars.requestid]" />
+	</flow>
+</mule>
